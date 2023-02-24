@@ -1,0 +1,57 @@
+title: |-
+  Bitbucket to Gitlab Mirror
+summary: |
+  Mirrors Bitbucket repositories to a Gitlab workspace.
+description: |
+  This bot will fetch all Bitbucket repositories from a given Bitbucket workspace and mirror each of them to a repository wit the same name on a Gitlab workspace.
+website: git@bitbucket.org:m2y/bitbucket-to-gitlab-repo-update-bitrise.git
+source_code_url: git@bitbucket.org:m2y/bitbucket-to-gitlab-repo-update-bitrise.git
+support_url: git@bitbucket.org:m2y/bitbucket-to-gitlab-repo-update-bitrise.git
+host_os_tags:
+  - osx-10.10
+  - ubuntu-16.04
+
+type_tags:
+  - utility
+
+is_requires_admin_user: false
+is_always_run: false
+is_skippable: false
+run_if: ""
+
+deps:
+  brew:
+  - name: git
+  apt_get:
+  - name: git
+
+toolkit:
+  bash:
+    entry_file: step.sh
+
+inputs:
+  - BITBUCKET_USERNAME: ""
+    opts:
+      title: "Bitbucket Username"
+      summary: "A username with access to the Bitbucket workspace."
+      is_required: true
+  - BITBUCKET_PASSWORD: ""
+    opts:
+      title: "Bitbucket Password"
+      summary: "Bitbucket App Password for the given user."
+      is_required: true
+  - BITBUCKET_WORKSPACE: ""
+    opts:
+      title: "Bitbucket Workspace"
+      summary: "A workspace from which the repositories will be fetched."
+      is_required: true
+  - GITLAB_NAMESPACE: ""
+    opts:
+      title: "Gitlab Namespace"
+      summary: "Gitlab namespace with access to all target repositories."
+      is_required: true
+  - GITLAB_TOKEN: "glpat-"
+    opts:
+      title: "Bitbucket Workspace"
+      summary: "Gitlab token for the given namespace."
+      is_required: true
