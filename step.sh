@@ -8,14 +8,18 @@ rm -rf TestRepo.git/ TestRepo1.git/ TestRepo2.git/
 GITLAB_BASE_URL="https://gitlab.com/api/v4"
 BITBUCKET_BASE_URL="https://api.bitbucket.org/2.0"
 
-# Define a quantidade de dias a serem retornados a partir da data atual
-DAYS_TO_RETURN=7
-
 # Subtrai o número de dias da data atual e converte em um formato aceito pela URL
-LAST_UPDATED=$(date '+%Y-%m-%d')
-LAST_UPDATED_UNIX=$(date -j -f "%Y-%m-%d" "$LAST_UPDATED" "+%s")
-LAST_UPDATED_UNIX=$(expr $LAST_UPDATED_UNIX - $DAYS_TO_RETURN \* 24 \* 3600)
-LAST_UPDATED=$(date -r "$LAST_UPDATED_UNIX" -u "+%Y-%m-%dT%H:%M:%S-00:00")
+if [[ "$OSTYPE" == "darwin"* ]]; then # Processamento de datas para sistemas MacOS
+    LAST_UPDATED=$(date '+%Y-%m-%d')
+    LAST_UPDATED_UNIX=$(date -j -f "%Y-%m-%d" "$LAST_UPDATED" "+%s")
+    LAST_UPDATED_UNIX=$(expr $LAST_UPDATED_UNIX - $DAYS_TO_LOOK_BACK \* 24 \* 3600)
+    LAST_UPDATED=$(date -r "$LAST_UPDATED_UNIX" -u "+%Y-%m-%dT%H:%M:%S-00:00")
+else # Processamento de datas para sistemas Linux
+    LAST_UPDATED=$(date +%s)
+    LAST_UPDATED=$(expr $LAST_UPDATED - $DAYS_TO_LOOK_BACK \* 24 \* 3600)
+    LAST_UPDATED=$(date -u -d @"$LAST_UPDATED" "+%Y-%m-%dT%H:%M:%S-00:00")
+fi
+
 LAST_UPDATED_ENCODED=$(echo "$LAST_UPDATED" | sed 's/:/%3A/g')
 
 # Busca uma lista com todos os repositórios do workspace no Bitbucket

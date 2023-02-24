@@ -13,6 +13,7 @@ workflows:
           file if you would not specify another value.
         run_if: true
         inputs:
+            - DAYS_TO_LOOK_BACK: 7
             - BITBUCKET_USERNAME: ""
             - BITBUCKET_PASSWORD: ""
             - BITBUCKET_WORKSPACE: ""

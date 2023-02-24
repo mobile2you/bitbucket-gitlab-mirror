@@ -30,6 +30,11 @@ toolkit:
     entry_file: step.sh
 
 inputs:
+  - DAYS_TO_LOOK_BACK: 7
+    opts:
+      title: "Days to Look Back"
+      summary: "Defines the number of days to look back for repository updates."
+      is_required: true
   - BITBUCKET_USERNAME: ""
     opts:
       title: "Bitbucket Username"
