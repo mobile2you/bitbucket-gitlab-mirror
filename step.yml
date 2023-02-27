@@ -55,8 +55,13 @@ inputs:
       title: "Gitlab Namespace"
       summary: "Gitlab namespace with access to all target repositories."
       is_required: true
-  - GITLAB_TOKEN: "glpat-"
+  - GITLAB_TOKEN: ""
     opts:
       title: "Bitbucket Workspace"
       summary: "Gitlab token for the given namespace."
+      is_required: true
+  - GITLAB_WORKSPACE: ""
+    opts:
+      title: "Gitlab Workspace"
+      summary: "Gitlab workspace URL. Must include Gitlab URL and workspace name (ex: gitlab.com.br/my-workspace)."
       is_required: true

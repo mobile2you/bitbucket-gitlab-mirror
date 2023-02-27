@@ -22,27 +22,39 @@ fi
 
 LAST_UPDATED_ENCODED=$(echo "$LAST_UPDATED" | sed 's/:/%3A/g')
 
-# Busca uma lista com todos os repositórios do workspace no Bitbucket
-REPO_LIST=$(curl -s -u "$BITBUCKET_USERNAME:$BITBUCKET_PASSWORD" "$BITBUCKET_BASE_URL/repositories/$BITBUCKET_WORKSPACE?q=updated_on%20%3E%20$LAST_UPDATED_ENCODED&sort=-updated_on&pagelen=100")
+# Busca a primeira página com os repositórios
+FIRST_PAGE=$(curl -s -u "$BITBUCKET_USERNAME:$BITBUCKET_PASSWORD" "$BITBUCKET_BASE_URL/repositories/$BITBUCKET_WORKSPACE?q=updated_on%20%3E%20$LAST_UPDATED_ENCODED&sort=-updated_on&pagelen=50")
 
-# Loop pelos repositórios na lista
-for ROW in $(echo "${REPO_LIST}" | jq -r '.values[] | @base64'); do
-  _jq() {
-    echo ${ROW} | base64 --decode | jq -r ${1}
-  }
+# Imprime a contagem de repositórios
+echo "Foram encontrados $(echo "$FIRST_PAGE" | jq -r '.size') repositórios."
 
-  # Extrai o nome do repositório
-  REPO_NAME=$(_jq '.name')
+# Inicializa a variável de próxima página
+NEXT_PAGE=$(echo "$FIRST_PAGE" | jq -r '.next')
 
-  echo "Repo name: "
-  echo $REPO_NAME
+# Inicializa a lista de repositórios com a primeira página de resultados
+REPO_LIST=$(echo "$FIRST_PAGE" | jq -r '.values[].name')
 
+# Enquanto houver uma próxima página de resultados
+while [[ ! -z "$NEXT_PAGE" && "$NEXT_PAGE" != "null" ]]; do
+    # Busca a próxima página de resultados
+    NEW_PAGE=$(curl -s -u "$BITBUCKET_USERNAME:$BITBUCKET_PASSWORD" "$NEXT_PAGE")
+    # Adiciona os nomes dos repositórios da próxima página à lista de repositórios
+    REPO_LIST=$(echo "$REPO_LIST"; echo "$NEW_PAGE" | jq -r '.values[].name')
+    # Obtém o link para a próxima página, se houver
+    NEXT_PAGE=$(echo "$NEW_PAGE" | jq -r '.next')
+done
+
+# Imprime a lista com todos os repositórios
+echo "$REPO_LIST" | nl -w 2 -s '. '
+
+# Itera na lista de repositórios encontrados
+for REPO_NAME in $REPO_LIST; do
   # Clona o repositório do Bitbucket localmente
   git clone --mirror "https://$BITBUCKET_USERNAME:$BITBUCKET_PASSWORD@bitbucket.org/$BITBUCKET_WORKSPACE/$REPO_NAME.git"
   cd "$REPO_NAME.git"
 
   # Faz o push com mirror do repositório
-  git push --mirror --force "https://$GITLAB_NAMESPACE:$GITLAB_TOKEN@gitlab.com/$GITLAB_NAMESPACE/$REPO_NAME.git"
+  git push --mirror --force "https://$GITLAB_NAMESPACE:$GITLAB_TOKEN@$GITLAB_WORKSPACE/$REPO_NAME.git"
 
   # Retorna para o diretório anterior
   cd ..

@@ -19,3 +19,4 @@ workflows:
             - BITBUCKET_WORKSPACE: ""
             - GITLAB_NAMESPACE: ""
             - GITLAB_TOKEN: ""
+            - GITLAB_WORKSPACE: ""
