@@ -50,7 +50,7 @@ echo "$REPO_LIST" | nl -w 2 -s '. '
 # Itera na lista de repositórios encontrados
 for REPO_NAME in $REPO_LIST; do
   # Clona o repositório do Bitbucket localmente
-  git clone --mirror "https://$BITBUCKET_USERNAME:$BITBUCKET_PASSWORD@bitbucket.org/$BITBUCKET_WORKSPACE/$REPO_NAME.git"
+  git clone --bare "https://$BITBUCKET_USERNAME:$BITBUCKET_PASSWORD@bitbucket.org/$BITBUCKET_WORKSPACE/$REPO_NAME.git"
   cd "$REPO_NAME.git"
 
   # Faz o push com mirror do repositório
