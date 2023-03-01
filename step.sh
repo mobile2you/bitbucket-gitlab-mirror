@@ -47,6 +47,9 @@ done
 # Imprime a lista com todos os repositórios
 echo "$REPO_LIST" | nl -w 2 -s '. '
 
+# Lista com os erros para cada repositório
+ERROR_MESSAGES=()
+
 # Itera na lista de repositórios encontrados
 for REPO_NAME in $REPO_LIST; do
   # Clona o repositório do Bitbucket localmente
@@ -54,13 +57,22 @@ for REPO_NAME in $REPO_LIST; do
   cd "$REPO_NAME.git"
 
   # Faz o push com mirror do repositório
-  git push --mirror --force "https://$GITLAB_NAMESPACE:$GITLAB_TOKEN@$GITLAB_WORKSPACE/$REPO_NAME.git"
+  if ! git push --mirror --force "https://$GITLAB_NAMESPACE:$GITLAB_TOKEN@$GITLAB_WORKSPACE/$REPO_NAME.git"; then
+    # Adiciona a mensagem de erro na lista
+    ERROR_MESSAGES+=("$REPO_NAME - Falha ao fazer o mirror do repositório no Gitlab")
+  fi
 
   # Retorna para o diretório anterior
   cd ..
 done
 
-# Mensagem de conclusão
-echo "Transferência concluída!"
+# Imprime a lista de erros, caso haja
+if [[ ${#ERROR_MESSAGES[@]} -gt 0 ]]; then
+  ERROR_STRING=$(printf '%s\n' "${ERROR_MESSAGES[@]}" | awk '{print NR". "$0}')
+  envman add --key ERROR_MESSAGE_OUTPUT --value $ERROR_STRING
+  exit 1
+else
+  echo "Transferência concluída!"
+  exit 0
+fi
 
-exit 0

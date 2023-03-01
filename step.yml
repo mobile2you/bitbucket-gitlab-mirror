@@ -65,3 +65,8 @@ inputs:
       title: "Gitlab Workspace"
       summary: "Gitlab workspace URL. Must include Gitlab URL and workspace name (ex: gitlab.com.br/my-workspace)."
       is_required: true
+outputs:
+  - ERROR_MESSAGE_OUTPUT:
+    opts:
+      title: Error messages
+      description: "A string listing every error that ocourred during the build."
