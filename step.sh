@@ -69,7 +69,7 @@ done
 # Imprime a lista de erros, caso haja
 if [[ ${#ERROR_MESSAGES[@]} -gt 0 ]]; then
   ERROR_STRING=$(printf '%s\n' "${ERROR_MESSAGES[@]}" | awk '{print NR". "$0}')
-  envman add --key ERROR_MESSAGE_OUTPUT --value $ERROR_STRING
+  envman add --key ERROR_MESSAGE_OUTPUT --value "$ERROR_STRING"
   exit 1
 else
   echo "Transferência concluída!"
