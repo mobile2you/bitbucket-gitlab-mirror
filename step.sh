@@ -32,14 +32,14 @@ echo "Foram encontrados $(echo "$FIRST_PAGE" | jq -r '.size') repositórios."
 NEXT_PAGE=$(echo "$FIRST_PAGE" | jq -r '.next')
 
 # Inicializa a lista de repositórios com a primeira página de resultados
-REPO_LIST=$(echo "$FIRST_PAGE" | jq -r '.values[].name')
+REPO_LIST=$(echo "$FIRST_PAGE" | jq -r '.values[].slug')
 
 # Enquanto houver uma próxima página de resultados
 while [[ ! -z "$NEXT_PAGE" && "$NEXT_PAGE" != "null" ]]; do
     # Busca a próxima página de resultados
     NEW_PAGE=$(curl -s -u "$BITBUCKET_USERNAME:$BITBUCKET_PASSWORD" "$NEXT_PAGE")
     # Adiciona os nomes dos repositórios da próxima página à lista de repositórios
-    REPO_LIST=$(echo "$REPO_LIST"; echo "$NEW_PAGE" | jq -r '.values[].name')
+    REPO_LIST=$(echo "$REPO_LIST"; echo "$NEW_PAGE" | jq -r '.values[].slug')
     # Obtém o link para a próxima página, se houver
     NEXT_PAGE=$(echo "$NEW_PAGE" | jq -r '.next')
 done
