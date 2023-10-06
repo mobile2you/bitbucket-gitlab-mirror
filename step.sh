@@ -52,6 +52,12 @@ ERROR_MESSAGES=()
 
 # Itera na lista de repositórios encontrados
 for REPO_NAME in $REPO_LIST; do
+  # Verifica se o repositório deve ser ignorado
+  if [ "$REPO_NAME" = "dimensa-nightking-backend" ]; then
+    echo "Ignorando o repositório $REPO_NAME"
+    continue
+  fi
+
   # Clona o repositório do Bitbucket localmente
   git clone --bare "https://$BITBUCKET_USERNAME:$BITBUCKET_PASSWORD@bitbucket.org/$BITBUCKET_WORKSPACE/$REPO_NAME.git"
   cd "$REPO_NAME.git"
