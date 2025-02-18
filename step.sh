@@ -23,7 +23,7 @@ fi
 LAST_UPDATED_ENCODED=$(echo "$LAST_UPDATED" | sed 's/:/%3A/g')
 
 # Busca a primeira página com os repositórios
-FIRST_PAGE=$(curl -s -u "$BITBUCKET_USERNAME:$BITBUCKET_PASSWORD" "$BITBUCKET_BASE_URL/repositories/$BITBUCKET_WORKSPACE?q=updated_on%20%3E%20$LAST_UPDATED_ENCODED&sort=-updated_on&pagelen=50")
+FIRST_PAGE=$(curl -s -u "$BITBUCKET_USERNAME:$BITBUCKET_PASSWORD" "$BITBUCKET_BASE_URL/repositories/$BITBUCKET_WORKSPACE?sort=-updated_on&pagelen=100")
 
 # Imprime a contagem de repositórios
 echo "Foram encontrados $(echo "$FIRST_PAGE" | jq -r '.size') repositórios."
